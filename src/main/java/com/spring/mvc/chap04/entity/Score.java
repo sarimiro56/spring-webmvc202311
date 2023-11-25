@@ -12,8 +12,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Score {
+
     private String name; // 학생 이름
     private int kor, eng, math; // 국영수 점수
+
     private int stuNum; // 학번
     private int total; // 총점
     private double average; // 평균
@@ -43,5 +45,13 @@ public class Score {
         this.kor = score.getKor();
         this.eng = score.getEng();
         this.math = score.getMath();
+    }
+
+    public void changeScore(ScoreRequestDTO dto) {
+        this.kor = dto.getKor();
+        this.eng = dto.getEng();
+        this.math = dto.getMath();
+        calculateTotalAndAverage();
+        makeGrade();
     }
 }
