@@ -4,7 +4,7 @@ import com.spring.mvc.chap05.entity.Board;
 
 import java.util.List;
 
-// 게시판 CRUD 기능 명세
+// ㄱㅔ시판 CRUD 기능 명세
 public interface BoardRepository {
 
     // 목록 조회
@@ -18,4 +18,8 @@ public interface BoardRepository {
 
     // 게시물 삭제
     boolean deleteByNo(int boardNo);
+
+    // 조회수 상승
+    default void updateViewCount(int boardNo) {}
+
 }
