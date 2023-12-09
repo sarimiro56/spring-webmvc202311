@@ -13,6 +13,7 @@ import java.time.ZoneId;
 @ToString @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder  // 빌더 패턴으로 객체 생성 가능
 public class Board {
 
     private int boardNo; // 게시글 번호
