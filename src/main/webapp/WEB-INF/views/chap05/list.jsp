@@ -35,6 +35,28 @@
         <button class="add-btn">새 글 쓰기</button>
     </div>
 
+    <div class="top-section">
+        <!-- 검색창 영역 -->
+        <div class="search">
+            <form action="/board/list" method="get">
+
+                <select class="form-select" name="type" id="search-type">
+                    <option value="title">제목</option>
+                    <option value="content">내용</option>
+                    <option value="writer">작성자</option>
+                    <option value="tc">제목+내용</option>
+                </select>
+
+                <input type="text" class="form-control" name="keyword" value="${s.keyword}">
+
+                <button class="btn btn-primary" type="submit">
+                    <i class="fas fa-search"></i>
+                </button>
+
+            </form>
+        </div>
+    </div>
+
     <div class="card-container">
 
         <c:forEach var="b" items="${bList}">
@@ -214,15 +236,17 @@
         window.location.href = '/board/write';
     };
 
+
     // 현재 위치한 페이지에 active 스타일 부여
     function appendPageActive() {
+
         // 현재 서버에서 내려준 페이지 번호
         const currPage = '${maker.page.pageNo}';
         // console.log(currPage);
 
         /*
-            li태그들을 전부 확인해서
-            현재 페이지 번호와 일치하는 li를 찾은 다음 active 클래스 붙이기
+           li태그들을 전부 확인해서
+           현재 페이지번호와 일치하는 li를 찾은 다음 active 클래스 붙이기
          */
         const $ul = document.querySelector('.pagination');
         const $liList = [...$ul.children];
@@ -232,8 +256,24 @@
                 $li.classList.add('active');
             }
         });
+
     }
+
+
+    // 검색조건 셀렉트박스 옵션타입 고정하기
+    function fixSearchOption() {
+        // 셀렉트박스에 option태그들을 전부 가져옴
+        const $options = [...document.getElementById('search-type').children];
+
+        $options.forEach($opt => {
+            if ($opt.value === '${s.type}') {
+                $opt.setAttribute('selected', 'selected');
+            }
+        });
+    }
+
     appendPageActive();
+    fixSearchOption();
 
 
 </script>
