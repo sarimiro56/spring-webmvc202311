@@ -3,6 +3,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.spring.mvc.chap05.repository.BoardMapper">
+
     <select id="findAll" resultType="board">
         SELECT * FROM tbl_board
 
@@ -14,8 +15,9 @@
         </if>
         <if test="type == 'tc'">
             WHERE title LIKE CONCAT('%', #{keyword}, '%')
-             OR content LIKE CONCAT('%', #{keyword}, '%')
+            OR content LIKE CONCAT('%', #{keyword}, '%')
         </if>
+
         ORDER BY board_no DESC
         LIMIT #{pageStart}, #{amount}
     </select>
@@ -27,9 +29,9 @@
 
     <insert id="save">
         INSERT INTO tbl_board
-            (title, content)
+        (title, content)
         VALUES
-            (#{title}, #{content})
+        (#{title}, #{content})
     </insert>
 
     <delete id="deleteByNo">
@@ -56,5 +58,7 @@
             WHERE title LIKE CONCAT('%', #{keyword}, '%')
             OR content LIKE CONCAT('%', #{keyword}, '%')
         </if>
+
     </select>
+
 </mapper>
