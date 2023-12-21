@@ -118,6 +118,8 @@
             background: #888 !important;
             color: #fff !important;
         }
+
+
     </style>
 </head>
 <body>
@@ -271,16 +273,18 @@
 
     }
 
+
     // 화면에 댓글 태그들을 렌더링하는 함수
-    function renderReplies( { replies, count, pageInfo } ) {
+    function renderReplies({replies, count, pageInfo}) {
 
         let tag = '';
 
-        for (let reply of replies) {
+        if (replies !== null && replies.length > 0) {
+            for (let reply of replies) {
 
-            const { rno, writer, text, regDate } = reply;
+                const {rno, writer, text, regDate} = reply;
 
-            tag += `
+                tag += `
         <div id='replyContent' class='card-body' data-replyId='\${rno}'>
             <div class='row user-block'>
                 <span class='col-md-3'>
@@ -289,26 +293,35 @@
                 <span class='offset-md-6 col-md-3 text-right'><b>\${regDate}</b></span>
             </div><br>
             <div class='row'>
-                <div class='col-md-6'>\${text}</div>
-                <div class='et-md-2 col-md-4 text-right'></div>
-
+                <div class='col-md-9'>\${text}</div>
+                <div class='col-md-3 text-right'>
+                    <a id='replyModBtn' class='btn btn-sm btn-outline-dark' data-bs-toggle='modal' data-bs-target='#replyModifyModal'>수정</a>&nbsp;
+                    <a id='replyDelBtn' class='btn btn-sm btn-outline-dark' href='#'>삭제</a>
+                </div>
             </div>
         </div>
       `;
 
-            // 댓글 수 렌더링
-            document.getElementById('replyCnt').innerHTML = count;
 
-            // 댓글 렌더링
-            document.getElementById('replyData').innerHTML = tag;
 
-            // 페이지 렌더링
-            renderPage(pageInfo);
+            } //end for
+
+        }// end if
+        else {
+            tag += "<div id='replyContent' class='card-body'>댓글이 아직 없습니다! ㅠㅠ</div>";
         }
+
+        // 댓글 수 렌더링
+        document.getElementById('replyCnt').innerHTML = count;
+        // 댓글 렌더링
+        document.getElementById('replyData').innerHTML = tag;
+
+        // 페이지 렌더링
+        renderPage(pageInfo);
     }
 
     // 서버에 실시간으로 비동기통신을 해서 JSON을 받아오는 함수
-    function fetchGetReplies(page=1) {
+    function fetchGetReplies(page = 1) {
 
         fetch(`\${URL}/\${bno}/page/\${page}`)
             .then(res => res.json())
@@ -318,20 +331,25 @@
             })
         ;
     }
+
     // 페이지 클릭 이벤트 핸들러 등록 함수
     function makePageButtonClickEvent() {
-        const $pageUI = document.querySelector('.pagination');
 
-        $pageUI.onclick = e => {
-            // 이벤트 타겟이 a 링크가 아닌 경우 href 속성을 못 가져올 수 있으니 타겟 제한하기
+        const $pageUl = document.querySelector('.pagination');
+
+        $pageUl.onclick = e => {
+
+            // 이벤트 타겟이 a링크가 아닌경우 href속성을 못가져올 수 있으니 타겟 제한하기
             if (!e.target.matches('.page-item a')) return;
-            console.log(e.target.getAttribute('href'));
+
+            // console.log(e.target.getAttribute('href'));
 
             e.preventDefault(); // href 링크이동 기능 중단 : 태그 기본 기능 동작 중단
 
             // 페이지 번호에 맞는 새로운 댓글 목록 비동기 요청
             fetchGetReplies(e.target.getAttribute('href'));
         };
+
     }
 
     // 댓글 등록 처리 핸들러 등록 함수
@@ -339,14 +357,16 @@
         const $addBtn = document.getElementById('replyAddBtn');
 
         $addBtn.onclick = e => {
+
             const $replyText = document.getElementById('newReplyText');
             const $replyWriter = document.getElementById('newReplyWriter');
 
             // console.log($replyText.value);
             // console.log($replyWriter.value);
 
-            const textVal = $replyText.value;
-            const writerVal = $replyWriter.value;
+            const textVal = $replyText.value.trim();
+            const writerVal = $replyWriter.value.trim();
+
             // 사용자 입력값 검증
             if (textVal === '') {
                 alert('댓글 내용은 필수값입니다!!');
@@ -358,11 +378,13 @@
                 alert('댓글 작성자는 2글자에서 8글자 사이로 작성하세요!');
                 return;
             }
+
+
             // 서버로 보낼 데이터
             const payload = {
-                text : $replyText.value,
-                author : $replyWriter.value,
-                bno : bno
+                text: $replyText.value,
+                author: $replyWriter.value,
+                bno: bno
             };
 
             // GET방식을 제외한 요청의 정보 만들기
@@ -393,6 +415,49 @@
                     fetchGetReplies(responseData.pageInfo.finalPage);
                 });
         };
+
+    }
+
+    // 댓글 삭제 이벤트 핸들러 등록 및 처리 함수
+    function makeReplyRemoveClickEvent() {
+
+        const $replyData = document.getElementById('replyData');
+
+        $replyData.onclick = e => {
+
+            e.preventDefault(); // a태그 링크이동 기능 중지
+
+            // 삭제버튼에만 이벤트가 작동하도록 설정
+            if (e.target.matches('#replyDelBtn')) {
+                // console.log('삭제 버튼 클릭!');
+
+                if (!confirm('정말 삭제할까요??')) return;
+
+                // 댓글번호 찾기
+                const rno = e.target.closest('#replyContent').dataset.replyid;
+                console.log(rno);
+
+                const requestInfo = {
+                    method: 'DELETE'
+                };
+                // 서버에 삭제 비동기 요청
+                fetch(`\${URL}/\${rno}`, requestInfo)
+                    .then(res => {
+                        if (res.status === 200) {
+                            alert('댓글이 삭제되었습니다!');
+                            return res.json();
+                        } else {
+                            alert('댓글 삭제에 실패했습니다.');
+                            return;
+                        }
+                    })
+                    .then(responseResult => {
+                        renderReplies(responseResult);
+                    });
+            }
+
+        };
+
     }
 
     //========== 메인 실행부 ==========//
@@ -403,11 +468,15 @@
         // 댓글 서버에서 불러오기
         fetchGetReplies();
 
-        // 페이지 번호 클릭 이벤트 핸들러 처리
+        // 페이지 번호 클릭 이벤트 핸들러처리
         makePageButtonClickEvent();
 
         // 댓글 등록 클릭 이벤트 핸들러 처리
         makeReplyPostClickEvent();
+
+        // 댓글 삭제 클릭 이벤트 핸들러 처리
+        makeReplyRemoveClickEvent();
+
     })();
 
 
