@@ -2,6 +2,7 @@ package com.spring.mvc.chap05.service;
 
 import com.spring.mvc.chap05.common.Page;
 import com.spring.mvc.chap05.common.PageMaker;
+import com.spring.mvc.chap05.dto.request.ReplyModifyRequestDTO;
 import com.spring.mvc.chap05.dto.request.ReplyPostRequestDTO;
 import com.spring.mvc.chap05.dto.response.ReplyDetailResponseDTO;
 import com.spring.mvc.chap05.dto.response.ReplyListResponseDTO;
@@ -68,5 +69,14 @@ public class ReplyService {
         replyMapper.delete(replyNo);
 
         return getList(boardNo, new Page(1, 5));
+    }
+
+    // 댓글 수정 처리
+    @Transactional
+    public ReplyListResponseDTO modify(ReplyModifyRequestDTO dto) throws Exception {
+
+        replyMapper.modify(dto.toEntity());
+
+        return getList(dto.getBno(), new Page(1, 5));
     }
 }
