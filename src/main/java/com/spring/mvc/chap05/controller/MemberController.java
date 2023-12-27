@@ -57,6 +57,7 @@ public class MemberController {
     // 로그인 양식 요청
     @GetMapping("/sign-in")
     public String signIn(HttpSession session) {
+
 //        if (session.getAttribute("login") != null) {
 //            return "redirect:/";
 //        }
@@ -87,10 +88,11 @@ public class MemberController {
 
         if (result == LoginResult.SUCCESS) { // 로그인 성공시
 
-//            makeLoginCookie(dto, response);  // 쿠키로 로그인 유지
+            // makeLoginCookie(dto, response);  // 쿠키로 로그인 유지
 
             // 세션으로 로그인 유지
             memberService.maintainLoginState(request.getSession(), dto.getAccount());
+
 
             return "redirect:/";
         }

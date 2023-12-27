@@ -1,5 +1,6 @@
 package com.spring.mvc.interceptor;
 
+import com.spring.mvc.util.LoginUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -8,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import static com.spring.mvc.util.LoginUtils.isLogin;
+import static com.spring.mvc.util.LoginUtils.*;
 
 
 /*
@@ -24,7 +25,7 @@ public class BoardInterceptor implements HandlerInterceptor {
 
         HttpSession session = request.getSession();
         // 로그인을 안했으면 글쓰기, 글수정, 글삭제 요청을 튕겨낼 것
-        if (isLogin(session)) {
+        if (!isLogin(session)) {
             log.info("this request ({}) is denied!!", request.getRequestURI());
             response.sendRedirect("/members/sign-in");
             return false;

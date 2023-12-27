@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @ToString @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder  // 빌더 패턴으로 객체 생성 가능
+@Builder // 빌더패턴으로 객체생성 가능
 public class Board {
 
     private int boardNo; // 게시글 번호
@@ -19,6 +19,7 @@ public class Board {
     private String content; // 내용
     private int viewCount; // 조회수
     private LocalDateTime regDateTime; // 작성일자시간
+    private String account;
 
     public Board(int boardNo, String title, String content) {
         this.boardNo = boardNo;

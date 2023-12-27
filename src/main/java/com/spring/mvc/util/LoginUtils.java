@@ -1,5 +1,6 @@
 package com.spring.mvc.util;
 
+
 import com.spring.mvc.chap05.dto.response.LoginUserResponseDTO;
 
 import javax.servlet.http.HttpSession;
@@ -9,7 +10,6 @@ public class LoginUtils {
 
     // 로그인 세션 키
     public static final String LOGIN_KEY = "login";
-
 
     // 로그인 여부 확인
     public static boolean isLogin(HttpSession session) {
@@ -35,5 +35,6 @@ public class LoginUtils {
     public static boolean isMine(HttpSession session, String targetAccount) {
         return targetAccount.equals(getCurrentLoginMemberAccount(session));
     }
+
 
 }

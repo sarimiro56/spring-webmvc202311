@@ -3,7 +3,6 @@ package com.spring.mvc.config;
 import com.spring.mvc.interceptor.AfterLoginInterceptor;
 import com.spring.mvc.interceptor.BoardInterceptor;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -11,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 // 만든 인터셉터들을 스프링 컨텍스트에 등록하는 설정 파일
 @Configuration
 @RequiredArgsConstructor
-@Slf4j
 public class InterceptorConfig implements WebMvcConfigurer {
 
     private final AfterLoginInterceptor afterLoginInterceptor;
@@ -31,6 +29,6 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 .addInterceptor(boardInterceptor)
                 .addPathPatterns("/board/*")
                 .excludePathPatterns("/board/list", "/board/detail")   // 인터셉터 발동을 제외할 경로
-                ;
+        ;
     }
 }
