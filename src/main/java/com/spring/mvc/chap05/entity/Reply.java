@@ -1,5 +1,6 @@
 package com.spring.mvc.chap05.entity;
 
+
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,6 +21,16 @@ import java.time.LocalDateTime;
  on delete cascade
  );
 
+ ALTER TABLE tbl_reply
+ ADD account VARCHAR(50);
+
+ ALTER TABLE tbl_reply
+ ADD CONSTRAINT fk_reply_account
+ FOREIGN KEY (account)
+ REFERENCES tbl_member (account)
+ ON DELETE CASCADE
+ ;
+
  */
 
 @Getter @ToString
@@ -28,10 +39,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class Reply {
+
     private long replyNo;
     @Setter
     private String replyText;
+    @Setter
     private String replyWriter;
     private LocalDateTime replyDate;
     private long boardNo;
+    @Setter
+    private String account;
+
 }
