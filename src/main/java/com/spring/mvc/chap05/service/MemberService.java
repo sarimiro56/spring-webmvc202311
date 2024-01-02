@@ -6,8 +6,6 @@ import com.spring.mvc.chap05.dto.request.SignUpRequestDTO;
 import com.spring.mvc.chap05.dto.response.LoginUserResponseDTO;
 import com.spring.mvc.chap05.entity.Member;
 import com.spring.mvc.chap05.repository.MemberMapper;
-import com.spring.mvc.util.LoginUtils;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,8 +20,7 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
 import static com.spring.mvc.chap05.service.LoginResult.*;
-import static com.spring.mvc.util.LoginUtils.AUTO_LOGIN_COOKIE;
-import static com.spring.mvc.util.LoginUtils.getCurrentLoginMemberAccount;
+import static com.spring.mvc.util.LoginUtils.*;
 
 @Service
 @Slf4j
@@ -34,11 +31,11 @@ public class MemberService {
     private final PasswordEncoder encoder;
 
     // 회원가입 처리 서비스
-    public boolean join(SignUpRequestDTO dto) {
+    public boolean join(SignUpRequestDTO dto, String savePath) {
 
         // 클라이언트가 보낸 회원가입 데이터를
         // 패스워드 인코딩하여 엔터티로 변환해서 전달
-        return memberMapper.save(dto.toEntity(encoder));
+        return memberMapper.save(dto.toEntity(encoder, savePath));
     }
 
     // 로그인 검증 처리
@@ -69,7 +66,7 @@ public class MemberService {
             // 1. 자동 로그인 쿠키 생성 - 쿠키 안에 절대 중복되지 않는 값(브라우저 세션 아이디)을 저장
             Cookie autoLoginCookie = new Cookie(AUTO_LOGIN_COOKIE, session.getId());
 
-            // 2. 쿠키 설정 - 사용 경로, 수명...
+            // 2. 쿠키 설정 - 사용경로, 수명...
             int limitTime = 60 * 60 * 24 * 90; // 자동 로그인 유지 시간
             autoLoginCookie.setPath("/");
             autoLoginCookie.setMaxAge(limitTime);
@@ -77,7 +74,7 @@ public class MemberService {
             // 3. 쿠키를 클라이언트에 전송
             response.addCookie(autoLoginCookie);
 
-            // 4. DB에도 쿠키에 관련된 값들(랜덤 세션키, 만료 시간)을 갱신
+            // 4. DB에도 쿠키에 관련된 값들(랜덤 세션키, 만료시간)을 갱신
             memberMapper.saveAutoLogin(
                     AutoLoginDTO.builder()
                             .sessionId(session.getId())
@@ -85,8 +82,8 @@ public class MemberService {
                             .account(dto.getAccount())
                             .build()
             );
-
         }
+
 
         log.info("{}님 로그인 성공!", foundMember.getAccount());
         return SUCCESS;
@@ -125,15 +122,15 @@ public class MemberService {
         log.debug("login: {}", dto);
 
         // 세션에 로그인한 회원의 정보 저장
-        session.setAttribute(LoginUtils.LOGIN_KEY, dto);
-
+        session.setAttribute(LOGIN_KEY, dto);
         // 세션도 수명을 설정해야 함.
-        session.setMaxInactiveInterval(60 * 60);  // 1시간
+        session.setMaxInactiveInterval(60 * 60); // 1시간
     }
 
 
     public void autoLoginClear(HttpServletRequest request, HttpServletResponse response) {
-        // 1. 자동 로그인 쿠키를 가져온다
+
+        // 1. 자동로그인 쿠키를 가져온다
         Cookie c = WebUtils.getCookie(request, AUTO_LOGIN_COOKIE);
 
         // 2. 쿠키를 삭제한다
@@ -152,5 +149,6 @@ public class MemberService {
                             .build()
             );
         }
+
     }
 }
