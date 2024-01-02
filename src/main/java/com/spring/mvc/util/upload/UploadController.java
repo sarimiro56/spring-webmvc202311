@@ -1,6 +1,7 @@
 package com.spring.mvc.util.upload;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,13 +9,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.IOException;
 
 @Controller
 @Slf4j
 public class UploadController {
 
-    private String rootPath = "C:\\spring-prj/upload";
+//    private String rootPath = "C:/spring-prj/upload";
+
+    @Value("${file.upload.root-path}")
+    private String rootPath;
 
     @GetMapping("/upload-form")
     public String uploadForm() {
@@ -45,7 +48,9 @@ public class UploadController {
         }
         */
 
-        String uploadedFilePath = FileUtil.uploadFile(file, rootPath);
+        FileUtil.uploadFile(file, rootPath);
+
+
         return "";
     }
 
